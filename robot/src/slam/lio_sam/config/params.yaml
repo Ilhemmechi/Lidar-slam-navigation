@@ -1,0 +1,181 @@
+# Configuration LIO-SAM corrigée pour Navigation Autonome
+# Frames cohérents avec votre setup actuel
+
+lio_sam_imageProjection:
+  ros__parameters:
+    # Topics
+    pointCloudTopic: "/velodyne_points"
+    imuTopic: "/imu/data"
+    odomTopic: "/odom"
+    gpsTopic: "gps/fix"
+    
+    # CORRECTION: Frames cohérents avec votre TF tree
+    lidarFrame: "lidar_link"
+    baselinkFrame: "base_link" 
+    odometryFrame: "odom"
+    mapFrame: "map"
+    
+    # Sensor config
+    sensor: "velodyne"
+    N_SCAN: 16
+    Horizon_SCAN: 1800
+    downsampleRate: 1
+    lidarMinRange: 0.3
+    lidarMaxRange: 100.0
+    
+    # Simulation settings
+    timeField: "time"
+    ringField: "ring"
+    use_sim_time: true
+    transform_timeout: 2.0  # ← RÉDUIT pour être moins tolérant
+   
+lio_sam_featureExtraction:
+  ros__parameters:
+    # Topics
+    pointCloudTopic: "/velodyne_points"
+    imuTopic: "/imu/data"
+    odomTopic: "/odom"
+    
+    # CORRECTION: Frames cohérents
+    lidarFrame: "lidar_link"
+    baselinkFrame: "base_link"  # ← CHANGÉ
+    odometryFrame: "odom"
+    mapFrame: "map"
+    
+    sensor: "velodyne"
+    N_SCAN: 16
+    Horizon_SCAN: 1800
+    downsampleRate: 1
+    lidarMinRange: 0.3
+    lidarMaxRange: 100.0
+    
+    # Feature extraction
+    edgeThreshold: 1.0
+    surfThreshold: 0.1
+    edgeFeatureMinValidNum: 10
+    surfFeatureMinValidNum: 100
+    
+    odometrySurfLeafSize: 0.4
+    mappingCornerLeafSize: 0.2
+    mappingSurfLeafSize: 0.4
+    use_sim_time: true
+
+lio_sam_imuPreintegration:
+  ros__parameters:
+    # Topics
+    pointCloudTopic: "/velodyne_points"
+    imuTopic: "/imu/data"
+    odomTopic: "/odom"
+    
+    # CORRECTION: Frames cohérents
+    lidarFrame: "lidar_link"
+    baselinkFrame: "base_link"  # ← CHANGÉ
+    odometryFrame: "odom"
+    mapFrame: "map"
+    
+    sensor: "velodyne"
+    N_SCAN: 16
+    Horizon_SCAN: 1800
+    lidarMinRange: 0.3
+    lidarMaxRange: 100.0
+    transform_timeout: 2.0  # ← RÉDUIT
+    tf_buffer_duration: 10.0  # ← RÉDUIT
+    
+    # IMU Settings
+    imuAccNoise: 3.9939570888238808e-03  # ← VALEURS PLUS RÉALISTES
+    imuGyrNoise: 1.5636343949698187e-03
+    imuAccBiasN: 6.4356659353532566e-05
+    imuGyrBiasN: 3.5640318696367613e-05
+    imuGravity: 9.80665
+    imuRPYWeight: 0.01
+    
+    # Calibration IMU->LiDAR (ajustez selon votre robot)
+    extrinsicTrans: [0.0, 0.0, 0.0]  # ← SIMPLIFIÉ pour test
+    extrinsicRot: [1.0, 0.0, 0.0,
+                   0.0, 1.0, 0.0,
+                   0.0, 0.0, 1.0]
+    
+    # CORRECTION IMPORTANTE: Réactiver la publication
+    publishOdometry: true  # ← CHANGÉ de false à true
+    use_sim_time: true
+
+lio_sam_mapOptimization:
+  ros__parameters:
+    # Topics
+    pointCloudTopic: "/velodyne_points"
+    imuTopic: "/imu/data"
+    odomTopic: "/odom"
+    gpsTopic: "gps/fix"
+    
+    # CORRECTION: Frames cohérents
+    lidarFrame: "lidar_link"
+    baselinkFrame: "base_link"  # ← CHANGÉ
+    odometryFrame: "odom"
+    mapFrame: "map"
+
+    sensor: "velodyne"
+    N_SCAN: 16
+    Horizon_SCAN: 1800
+    downsampleRate: 1
+    lidarMinRange: 0.3
+    lidarMaxRange: 100.0
+    
+    # IMU Settings cohérents
+    imuAccNoise: 3.9939570888238808e-03  # ← COHÉRENT avec imuPreintegration
+    imuGyrNoise: 1.5636343949698187e-03
+    imuAccBiasN: 6.4356659353532566e-05
+    imuGyrBiasN: 3.5640318696367613e-05
+    imuGravity: 9.80665
+    imuRPYWeight: 0.01
+    
+    # Calibration cohérente
+    extrinsicTrans: [0.0, 0.0, 0.0]  # ← SIMPLIFIÉ
+    extrinsicRot: [1.0, 0.0, 0.0,
+                   0.0, 1.0, 0.0,
+                   0.0, 0.0, 1.0]
+    
+    # Feature extraction
+    edgeThreshold: 1.0
+    surfThreshold: 0.1
+    edgeFeatureMinValidNum: 10
+    surfFeatureMinValidNum: 100
+    
+    # Voxel filtering
+    odometrySurfLeafSize: 0.4
+    mappingCornerLeafSize: 0.2
+    mappingSurfLeafSize: 0.4
+    
+    # Tolérance réduite pour simulation
+    z_tollerance: 0.5  # ← RÉDUIT
+    rotation_tollerance: 0.1  # ← RÉDUIT
+    
+    # Performance
+    numberOfCores: 4
+    mappingProcessInterval: 0.1  # ← PLUS RAPIDE
+    
+    # Keyframes plus fréquents pour simulation
+    surroundingkeyframeAddingDistThreshold: 0.5  # ← RÉDUIT
+    surroundingkeyframeAddingAngleThreshold: 0.1  # ← RÉDUIT
+    surroundingKeyframeDensity: 1.0
+    surroundingKeyframeSearchRadius: 25.0
+    
+    # Loop closure simplifié pour debug
+    loopClosureEnableFlag: false  # ← DÉSACTIVÉ temporairement
+    
+    # Initialization plus permissive
+    useImuHeadingInitialization: true
+    useGpsElevation: false
+    gpsCovThreshold: 10.0  # ← PLUS PERMISSIF
+    poseCovThreshold: 50.0  # ← PLUS PERMISSIF
+    
+    # Pas de sauvegarde
+    savePCD: false
+    
+    # Visualisation réduite
+    globalMapVisualizationSearchRadius: 25.0
+    globalMapVisualizationPoseDensity: 2.0
+    globalMapVisualizationLeafSize: 1.0
+    
+    # Publication TF: seulement map->odom
+    publishTF: true
+    use_sim_time: true

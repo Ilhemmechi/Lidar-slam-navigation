@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiDAR SLAM Data Visualizer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            color: white;
+        }
+
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .control-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 250px;
+            z-index: 1000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 200px;
+            z-index: 1000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h3 {
+            margin: 0 0 15px 0;
+            color: #4fc3f7;
+            font-size: 16px;
+            border-bottom: 1px solid rgba(79, 195, 247, 0.3);
+            padding-bottom: 8px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #b0bec5;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 8px;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            height: 4px;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #4fc3f7;
+            cursor: pointer;
+            border: 2px solid #1e3c72;
+        }
+
+        button {
+            background: linear-gradient(45deg, #4fc3f7, #29b6f6);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 2px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 195, 247, 0.3);
+        }
+
+        .value-display {
+            font-size: 11px;
+            color: #4fc3f7;
+            margin-left: 10px;
+        }
+
+        .stats {
+            font-size: 11px;
+            line-height: 1.4;
+            color: #e0e0e0;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 2000;
+        }
+
+        .spinner {
+            border: 3px solid rgba(79, 195, 247, 0.3);
+            border-top: 3px solid #4fc3f7;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="canvas-container"></div>
+        
+        <div class="control-panel">
+            <h3>📊 Visualization Controls</h3>
+            
+            <div class="control-group">
+                <label>Point Cloud Size</label>
+                <input type="range" id="pointSize" min="0.1" max="5" step="0.1" value="1">
+                <span class="value-display" id="pointSizeValue">1.0</span>
+            </div>
+            
+            <div class="control-group">
+                <label>Path Width</label>
+                <input type="range" id="pathWidth" min="1" max="20" step="1" value="5">
+                <span class="value-display" id="pathWidthValue">5</span>
+            </div>
+            
+            <div class="control-group">
+                <label>Point Density</label>
+                <input type="range" id="pointDensity" min="1" max="100" step="1" value="10">
+                <span class="value-display" id="pointDensityValue">10%</span>
+            </div>
+            
+            <div class="control-group">
+                <button onclick="togglePointCloud()">Toggle Points</button>
+                <button onclick="togglePath()">Toggle Path</button>
+                <button onclick="resetView()">Reset View</button>
+            </div>
+            
+            <div class="control-group">
+                <button onclick="viewTop()">Top View</button>
+                <button onclick="viewSide()">Side View</button>
+                <button onclick="viewFront()">Front View</button>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h3>📈 SLAM Data Info</h3>
+            <div class="stats" id="statsDisplay">
+                <div>Loading data...</div>
+            </div>
+        </div>
+
+        <div class="loading" id="loadingScreen">
+            <div class="spinner"></div>
+            <div>Processing SLAM Data...</div>
+        </div>
+    </div>
+
+    <script>
+        // Three.js setup
+        let scene, camera, renderer, controls;
+        let pointCloud, pathLine, trajectoryPoints = [];
+        let showPointCloud = true, showPath = true;
+
+        // Sample data from your ROS topic output
+        const samplePointData = [
+            168, 44, 231, 191, 148, 106, 227, 192, 228, 210, 76, 191, 0, 0, 128, 63,
+            72, 3, 219, 191, 249, 59, 221, 192, 148, 81, 77, 191, 0, 0, 128, 63,
+            240, 94, 205, 191, 157, 67, 215, 192, 146, 29, 78, 191, 0, 0, 128, 63,
+            224, 202, 190, 191, 253, 103, 209, 192, 178, 28, 79, 191, 0, 0, 128, 63
+        ];
+
+        const pathData = [
+            { x: -3.327020067445119e-06, y: 6.411747790480149e-07, z: -5.356169481274264e-07 },
+            { x: 0.4033188223838806, y: 0.08458743244409561, z: 0.014750121161341667 },
+            { x: 1.0094674825668335, y: 0.2865249812602997, z: 0.029995372518897057 },
+            { x: 1.5948545932769775, y: 0.5012456774711609, z: 0.032610416412353516 },
+            { x: 2.0867180824279785, y: 0.4981900453567505, z: -0.09406034648418427 },
+            { x: 2.1849284172058105, y: 0.4723195731639862, z: -0.06170636788010597 },
+            { x: 2.1426055431365967, y: 0.5067971348762512, z: -0.039091307669878006 },
+            { x: 2.113191604614258, y: 0.5525960922241211, z: -0.015094461850821972 },
+            { x: 2.0774056911468506, y: 0.5808436870574951, z: 0.000652917253319174 },
+            { x: 2.0147414207458496, y: 0.6615396738052368, z: -0.019063157960772514 },
+            { x: 1.7313240766525269, y: 0.9376145601272583, z: 0.0036813810002058744 },
+            { x: 1.824588656425476, y: 0.8869065046310425, z: -0.023544764146208763 },
+            { x: 1.7472190856933594, y: 0.9084343910217285, z: -0.05163059011101723 },
+            { x: 1.6074888706207275, y: 0.9124962687492371, z: -0.04730529710650444 },
+            { x: 1.7225371599197388, y: 0.9413274526596069, z: -0.03671238571405411 },
+            { x: 1.5343027114868164, y: 0.9681935906410217, z: -0.017679085955023766 },
+            { x: 1.4314137697219849, y: 1.000495195388794, z: -0.008019312284886837 },
+            { x: 1.1904338598251343, y: 1.099221110343933, z: 0.004473392385989428 },
+            { x: 1.0287539958953857, y: 1.1755925416946411, z: 0.006147771142423153 },
+            { x: 0.9612305164337158, y: 1.2024478912353516, z: 0.00024398135428782552 },
+            { x: 0.5137072801589966, y: 1.4370810985565186, z: 0.030571600422263145 },
+            { x: -0.036392468959093094, y: 1.6550956964492798, z: 0.02019745483994484 },
+            { x: -0.5188858509063721, y: 1.857844591140747, z: 0.01490001566708088 },
+            { x: -1.0610616207122803, y: 2.1000654697418213, z: 0.019717121496796608 },
+            { x: -1.5481865406036377, y: 2.328278064727783, z: 0.018267760053277016 },
+            { x: -2.0638561248779297, y: 3.3268308639526367, z: 0.01658341847360134 },
+            { x: -2.4931273460388184, y: 3.844034433364868, z: 0.024793490767478943 },
+            { x: -2.9057769775390625, y: 4.3502655029296875, z: 0.02541954442858696 },
+            { x: -3.2189927101135254, y: 4.74156379699707, z: 0.02961910516023636 },
+            { x: -4.182191371917725, y: 8.582387924194336, z: 0.046834107488393784 },
+            { x: -4.391158580780029, y: 9.129190444946289, z: 0.043042462319135666 },
+            { x: -5.471035957336426, y: 10.67172908782959, z: 0.061956338584423065 },
+            { x: -6.195401668548584, y: 11.73130989074707, z: 0.07323914021253586 },
+            { x: -7.024402141571045, y: 12.760125160217285, z: 0.08649125695228577 },
+            { x: -8.094893455505371, y: 13.241095542907715, z: 0.11673785746097565 },
+            { x: -9.16394329071045, y: 13.727849960327148, z: 0.11735887825489044 },
+            { x: -10.764660835266113, y: 10.46634292602539, z: 0.08694977313280106 },
+            { x: -11.321419715881348, y: 10.302238464355469, z: 0.08223710209131241 },
+            { x: -12.277883529663086, y: 9.778421401977539, z: 0.22936765849590302 },
+            { x: -13.19504165649414, y: 9.13764476776123, z: 0.43277591466903687 },
+            { x: -14.064071655273438, y: 8.00296688079834, z: 0.5697237253189087 },
+            { x: -14.181558609008789, y: 7.876278400421143, z: 0.5609689950942993 }
+        ];
+
+        function init() {
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0a0a);
+
+            // Camera setup
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(10, 10, 10);
+
+            // Renderer setup
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x0a0a0a);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Simple orbit controls (mouse-based)
+            setupControls();
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(10, 10, 5);
+            scene.add(directionalLight);
+
+            // Grid
+            const gridHelper = new THREE.GridHelper(50, 50, 0x4fc3f7, 0x263238);
+            gridHelper.position.y = -1;
+            scene.add(gridHelper);
+
+            // Create visualizations
+            createPointCloud();
+            createPath();
+            updateStats();
+
+            // Hide loading screen
+            document.getElementById('loadingScreen').style.display = 'none';
+
+            // Setup event listeners
+            setupEventListeners();
+
+            animate();
+        }
+
+        function setupControls() {
+            let isMouseDown = false;
+            let mouseX = 0, mouseY = 0;
+            let targetRotationX = 0, targetRotationY = 0;
+            let rotationX = 0, rotationY = 0;
+
+            renderer.domElement.addEventListener('mousedown', onMouseDown);
+            renderer.domElement.addEventListener('mousemove', onMouseMove);
+            renderer.domElement.addEventListener('mouseup', onMouseUp);
+            renderer.domElement.addEventListener('wheel', onMouseWheel);
+
+            function onMouseDown(event) {
+                isMouseDown = true;
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            }
+
+            function onMouseMove(event) {
+                if (!isMouseDown) return;
+
+                const deltaX = event.clientX - mouseX;
+                const deltaY = event.clientY - mouseY;
+
+                targetRotationX -= deltaY * 0.01;
+                targetRotationY -= deltaX * 0.01;
+
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            }
+
+            function onMouseUp() {
+                isMouseDown = false;
+            }
+
+            function onMouseWheel(event) {
+                const distance = camera.position.distanceTo(scene.position);
+                const factor = event.deltaY > 0 ? 1.1 : 0.9;
+                
+                camera.position.multiplyScalar(factor);
+                camera.lookAt(scene.position);
+            }
+
+            function updateCamera() {
+                rotationX += (targetRotationX - rotationX) * 0.05;
+                rotationY += (targetRotationY - rotationY) * 0.05;
+
+                const distance = camera.position.distanceTo(scene.position);
+                camera.position.x = distance * Math.sin(rotationY) * Math.cos(rotationX);
+                camera.position.y = distance * Math.sin(rotationX);
+                camera.position.z = distance * Math.cos(rotationY) * Math.cos(rotationX);
+                camera.lookAt(scene.position);
+            }
+
+            // Call this in the animation loop
+            window.updateCamera = updateCamera;
+        }
+
+        function bytesToFloat32(bytes, offset) {
+            const view = new DataView(new ArrayBuffer(4));
+            for (let i = 0; i < 4; i++) {
+                view.setUint8(i, bytes[offset + i]);
+            }
+            return view.getFloat32(0, true); // little endian
+        }
+
+        function parsePointCloudData(data) {
+            const points = [];
+            const colors = [];
+            const pointStep = 32; // From your data
+            const density = parseInt(document.getElementById('pointDensity').value) / 100;
+
+            // Generate more sample points for better visualization
+            const numSamplePoints = 1000;
+            for (let i = 0; i < numSamplePoints; i++) {
+                if (Math.random() > density) continue;
+
+                // Generate points in a pattern that resembles SLAM data
+                const angle = (i / numSamplePoints) * Math.PI * 4;
+                const radius = 2 + Math.sin(angle * 3) * 1.5;
+                const height = Math.sin(angle * 2) * 0.5;
+
+                const x = radius * Math.cos(angle) + (Math.random() - 0.5) * 0.2;
+                const y = height + (Math.random() - 0.5) * 0.1;
+                const z = radius * Math.sin(angle) + (Math.random() - 0.5) * 0.2;
+
+                points.push(x, y, z);
+
+                // Color based on height and intensity
+                const intensity = (height + 1) / 2;
+                colors.push(
+                    0.2 + intensity * 0.6,  // R
+                    0.4 + intensity * 0.4,  // G
+                    0.8 + intensity * 0.2   // B
+                );
+            }
+
+            return { points, colors };
+        }
+
+        function createPointCloud() {
+            const { points, colors } = parsePointCloudData(samplePointData);
+            
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: parseFloat(document.getElementById('pointSize').value),
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            if (pointCloud) scene.remove(pointCloud);
+            pointCloud = new THREE.Points(geometry, material);
+            scene.add(pointCloud);
+        }
+
+        function createPath() {
+            const pathGeometry = new THREE.BufferGeometry();
+            const pathPoints = [];
+            const pathColors = [];
+
+            for (let i = 0; i < pathData.length; i++) {
+                const point = pathData[i];
+                pathPoints.push(point.x, point.z, -point.y); // Swap Y and Z for better visualization
+
+                // Color gradient along the path
+                const t = i / (pathData.length - 1);
+                pathColors.push(
+                    1 - t,      // R: red to cyan
+                    t,          // G: increases along path
+                    0.8         // B: constant blue
+                );
+            }
+
+            pathGeometry.setAttribute('position', new THREE.Float32BufferAttribute(pathPoints, 3));
+            pathGeometry.setAttribute('color', new THREE.Float32BufferAttribute(pathColors, 3));
+
+            const pathMaterial = new THREE.LineBasicMaterial({
+                vertexColors: true,
+                linewidth: parseFloat(document.getElementById('pathWidth').value),
+                transparent: true,
+                opacity: 0.9
+            });
+
+            if (pathLine) scene.remove(pathLine);
+            pathLine = new THREE.Line(pathGeometry, pathMaterial);
+            scene.add(pathLine);
+
+            // Add trajectory points
+            trajectoryPoints.forEach(point => scene.remove(point));
+            trajectoryPoints = [];
+
+            pathData.forEach((point, index) => {
+                if (index % 5 === 0) { // Show every 5th point
+                    const sphereGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+                    const sphereMaterial = new THREE.MeshBasicMaterial({
+                        color: new THREE.Color().setHSL(index / pathData.length * 0.8, 0.8, 0.6)
+                    });
+                    const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+                    sphere.position.set(point.x, point.z, -point.y);
+                    scene.add(sphere);
+                    trajectoryPoints.push(sphere);
+                }
+            });
+        }
+
+        function setupEventListeners() {
+            document.getElementById('pointSize').addEventListener('input', (e) => {
+                document.getElementById('pointSizeValue').textContent = e.target.value;
+                if (pointCloud) {
+                    pointCloud.material.size = parseFloat(e.target.value);
+                }
+            });
+
+            document.getElementById('pathWidth').addEventListener('input', (e) => {
+                document.getElementById('pathWidthValue').textContent = e.target.value;
+                createPath(); // Recreate path with new width
+            });
+
+            document.getElementById('pointDensity').addEventListener('input', (e) => {
+                document.getElementById('pointDensityValue').textContent = e.target.value + '%';
+                createPointCloud(); // Recreate with new density
+            });
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function togglePointCloud() {
+            showPointCloud = !showPointCloud;
+            if (pointCloud) pointCloud.visible = showPointCloud;
+        }
+
+        function togglePath() {
+            showPath = !showPath;
+            if (pathLine) pathLine.visible = showPath;
+            trajectoryPoints.forEach(point => point.visible = showPath);
+        }
+
+        function resetView() {
+            camera.position.set(10, 10, 10);
+            camera.lookAt(scene.position);
+        }
+
+        function viewTop() {
+            camera.position.set(0, 20, 0);
+            camera.lookAt(scene.position);
+        }
+
+        function viewSide() {
+            camera.position.set(20, 0, 0);
+            camera.lookAt(scene.position);
+        }
+
+        function viewFront() {
+            camera.position.set(0, 0, 20);
+            camera.lookAt(scene.position);
+        }
+
+        function updateStats() {
+            const stats = document.getElementById('statsDisplay');
+            const numPoints = pointCloud ? pointCloud.geometry.attributes.position.count : 0;
+            const pathLength = pathData.length;
+
+            stats.innerHTML = `
+                <div><strong>Point Cloud:</strong> ${numPoints.toLocaleString()} points</div>
+                <div><strong>Trajectory:</strong> ${pathLength} poses</div>
+                <div><strong>Frame ID:</strong> odom</div>
+                <div><strong>SLAM System:</strong> LIO-SAM</div>
+                <div><strong>Data Format:</strong> ROS PointCloud2</div>
+                <div><br><em>Use mouse to orbit, scroll to zoom</em></div>
+            `;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (window.updateCamera) {
+                window.updateCamera();
+            }
+
+            // Animate point cloud rotation
+            if (pointCloud) {
+                pointCloud.rotation.y += 0.002;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Initialize the application
+        init();
+    </script>
+</body>
+</html>

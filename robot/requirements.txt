@@ -1,0 +1,6 @@
+# Python dependencies
+# Minimal dependencies for evaluation and utilities
+numpy
+pyyaml
+pytest
+evo

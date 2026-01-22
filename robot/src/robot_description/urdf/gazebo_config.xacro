@@ -1,0 +1,248 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- Configuration du contrôleur différentiel -->
+    <gazebo>
+        <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+            <ros>
+                <namespace>/</namespace>
+            </ros>
+            
+            <!-- Update rate -->
+            <update_rate>50</update_rate>
+            
+            <!-- Roues arrière (motrices) -->
+            <left_joint>back_left_wheel_joint</left_joint>
+            <right_joint>back_right_wheel_joint</right_joint>
+            
+            <!-- Paramètres cinématiques -->
+            <wheel_separation>0.45</wheel_separation>
+            <wheel_diameter>0.2</wheel_diameter>
+            
+            <!-- Limites -->
+            <max_wheel_torque>20</max_wheel_torque>
+            <max_wheel_acceleration>5.0</max_wheel_acceleration>
+            
+            <!-- Output -->
+            <publish_odom>true</publish_odom>
+            <publish_odom_tf>true</publish_odom_tf>
+            <publish_wheel_tf>true</publish_wheel_tf>
+            
+            <!-- Frames -->
+            <odometry_frame>odom</odometry_frame>
+            <robot_base_frame>base_footprint</robot_base_frame>
+            
+            <!-- Topics -->
+            <command_topic>cmd_vel</command_topic>
+            <odometry_topic>odom</odometry_topic>
+        </plugin>
+    </gazebo>
+
+    <!-- Configuration Gazebo pour le LiDAR 3D -->
+    <gazebo reference="lidar_link">
+        <sensor type="ray" name="lidar_3d_sensor">
+            <pose>0 0 0 0 0 0</pose>
+            <visualize>true</visualize>
+            <update_rate>20.0</update_rate>
+            <ray>
+                <scan>
+                    <!-- Configuration horizontale -->
+                    <horizontal>
+                        <samples>440</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-3.141592653589793</min_angle>
+                        <max_angle>3.141592653589793</max_angle>
+                    </horizontal>
+                    <!-- Configuration verticale pour LiDAR 3D -->
+                    <vertical>
+                        <samples>16</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-0.261799387799</min_angle>
+                        <max_angle>0.261799387799</max_angle>
+                    </vertical>
+                </scan>
+                <range>
+                    <min>0.3</min>
+                    <max>100.0</max>
+                    <resolution>0.001</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.008</stddev>
+                </noise>
+            </ray>
+            <plugin name="gazebo_ros_lidar_3d_controller" filename="libgazebo_ros_velodyne_laser.so">
+                <ros>
+                    <namespace>/velodyne</namespace>
+                </ros>
+                <topic_name>points</topic_name>
+                <frame_name>lidar_link</frame_name>
+                <min_range>0.9</min_range>
+                <max_range>130.0</max_range>
+                <gaussian_noise>0.008</gaussian_noise>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+    <!-- Configuration Gazebo pour la caméra -->
+    <gazebo reference="camera_link">
+        <sensor type="camera" name="camera_sensor">
+            <update_rate>30.0</update_rate>
+            <camera name="head">
+                <horizontal_fov>1.3962634</horizontal_fov>
+                <image>
+                    <width>800</width>
+                    <height>600</height>
+                    <format>R8G8B8</format>
+                </image>
+                <clip>
+                    <near>0.02</near>
+                    <far>300</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.007</stddev>
+                </noise>
+            </camera>
+            <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+                <ros>
+                    <namespace>/camera</namespace>
+                </ros>
+                <camera_name>camera1</camera_name>
+                <frame_name>camera_link</frame_name>
+                <hack_baseline>0.07</hack_baseline>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+    <!-- Configuration Gazebo pour l'IMU -->
+    <gazebo reference="imu_link">
+        <gravity>true</gravity>
+        <sensor name="imu_sensor" type="imu">
+            <always_on>true</always_on>
+            <update_rate>200</update_rate>
+            <visualize>true</visualize>
+            <imu>
+                <angular_velocity>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-4</stddev>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-4</stddev>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-4</stddev>
+                        </noise>
+                    </z>
+                </angular_velocity>
+                <linear_acceleration>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>1.7e-2</stddev>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>1.7e-2</stddev>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>1.7e-2</stddev>
+                        </noise>
+                    </z>
+                </linear_acceleration>
+            </imu>
+            <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+                <ros>
+                    <namespace>/imu</namespace>
+                </ros>
+                <topic_name>data</topic_name>
+                <body_name>imu_link</body_name>
+                <update_rate_hz>100.0</update_rate_hz>
+                <frame_name>imu_link</frame_name>
+                <initial_orientation_as_reference>false</initial_orientation_as_reference>
+            </plugin>
+            <pose>0 0 0 0 0 0</pose>
+        </sensor>
+    </gazebo>
+
+    <!-- Propriétés matérielles Gazebo -->
+    <gazebo reference="base_link">
+        <material>Gazebo/Blue</material>
+        <mu1>0.3</mu1>
+        <mu2>0.3</mu2>
+        <kp>10000000.0</kp>
+        <kd>1000.0</kd>
+    </gazebo>
+    
+    <gazebo reference="lidar_link">
+        <material>Gazebo/Green</material>
+    </gazebo>
+    
+    <gazebo reference="camera_link">
+        <material>Gazebo/Red</material>
+    </gazebo>
+    
+    <gazebo reference="imu_link">
+        <material>Gazebo/Yellow</material>
+    </gazebo>
+
+    <!-- Roues avant (casters - friction minimale) -->
+    <gazebo reference="front_right_wheel">
+        <material>Gazebo/Black</material>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+        <kp>10000000.0</kp>
+        <kd>1.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>10.0</maxVel>
+    </gazebo>
+    
+    <gazebo reference="front_left_wheel">
+        <material>Gazebo/Black</material>
+        <mu1>0.0</mu1>
+        <mu2>0.0</mu2>
+        <kp>10000000.0</kp>
+        <kd>1.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>10.0</maxVel>
+    </gazebo>
+    
+    <!-- Roues arrière (motrices - friction élevée) -->
+    <gazebo reference="back_right_wheel">
+        <material>Gazebo/Black</material>
+        <mu1>2.0</mu1>
+        <mu2>1.0</mu2>
+        <kp>10000000.0</kp>
+        <kd>100.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>10.0</maxVel>
+        <fdir1>1 0 0</fdir1>
+    </gazebo>
+    
+    <gazebo reference="back_left_wheel">
+        <material>Gazebo/Black</material>
+        <mu1>2.0</mu1>
+        <mu2>1.0</mu2>
+        <kp>10000000.0</kp>
+        <kd>100.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>10.0</maxVel>
+        <fdir1>1 0 0</fdir1>
+    </gazebo>
+
+</robot>

@@ -1,0 +1,169 @@
+# Corrected ROS2 parameter file for LIO-SAM
+# Each node must have its parameters under ros__parameters
+
+lio_sam_imageProjection:
+  ros__parameters:
+    # Topics
+    pointCloudTopic: "/velodyne/gazebo_ros_laser_controller/out"
+    imuTopic: "/imu/imu_plugin/out"
+    odomTopic: "odometry/imu"
+    gpsTopic: "odometry/gps"
+    
+    # Frames
+    lidarFrame: "velodyne_base_link"
+    baselinkFrame: "base_link"
+    odometryFrame: "odom"
+    mapFrame: "map"
+    
+    # Sensor Settings
+    sensor: "velodyne"
+    N_SCAN: 16
+    Horizon_SCAN: 1800
+    downsampleRate: 1
+    lidarMinRange: 1.0
+    lidarMaxRange: 1000.0
+    
+    # Point cloud field names
+    timeField: "time"
+    ringField: "ring"
+    
+    # Deskewing
+    deskewFlag: true
+
+lio_sam_featureExtraction:
+  ros__parameters:
+    # Sensor Settings (must match imageProjection)
+    sensor: "velodyne"
+    N_SCAN: 16
+    Horizon_SCAN: 1800
+    
+    # Point cloud field names
+    timeField: "time"
+    ringField: "ring"
+    
+    # LOAM feature threshold
+    edgeThreshold: 1.0
+    surfThreshold: 0.1
+    edgeFeatureMinValidNum: 10
+    surfFeatureMinValidNum: 100
+    
+    # Voxel filter params
+    odometrySurfLeafSize: 0.4
+    mappingCornerLeafSize: 0.2
+    mappingSurfLeafSize: 0.4
+
+lio_sam_imuPreintegration:
+  ros__parameters:
+    # Topics
+    imuTopic: "/imu/imu_plugin/out"
+    odomTopic: "odometry/imu"
+    
+    # Frames
+    lidarFrame: "velodyne_base_link"
+    baselinkFrame: "base_link"
+    odometryFrame: "odom"
+    mapFrame: "map"
+    
+    # IMU Settings
+    imuAccNoise: 3.9939570888238808e-03
+    imuGyrNoise: 1.5636343949698187e-03
+    imuAccBiasN: 6.4356659353532566e-05
+    imuGyrBiasN: 3.5640318696367613e-05
+    imuGravity: 9.80511
+    imuRPYWeight: 0.01
+    
+    # Extrinsics (LiDAR to IMU transformation)
+    extrinsicTrans: [0.0, 0.0, 0.0]
+    extrinsicRot: [-1.0, 0.0, 0.0,
+                    0.0, 1.0, 0.0,
+                    0.0, 0.0, -1.0]
+    
+    # Integration parameters
+    imuType: 0  # 0: 6-axis, 1: 9-axis
+    initializationFlag: true
+
+lio_sam_mapOptimization:
+  ros__parameters:
+    # Topics - mapOptimization subscribes to feature topics, not raw clouds
+    imuTopic: "/imu/imu_plugin/out"
+    odomTopic: "odometry/imu"
+    gpsTopic: "odometry/gps"
+    
+    # Frames
+    lidarFrame: "velodyne_base_link"
+    baselinkFrame: "base_link"
+    odometryFrame: "odom"
+    mapFrame: "map"
+    
+    # Sensor Settings
+    sensor: "velodyne"
+    N_SCAN: 16
+    Horizon_SCAN: 1800
+    downsampleRate: 1
+    lidarMinRange: 1.0
+    lidarMaxRange: 1000.0
+    
+    # Point cloud field names
+    timeField: "time"
+    ringField: "ring"
+    
+    # IMU Settings
+    imuAccNoise: 3.9939570888238808e-03
+    imuGyrNoise: 1.5636343949698187e-03
+    imuAccBiasN: 6.4356659353532566e-05
+    imuGyrBiasN: 3.5640318696367613e-05
+    imuGravity: 9.80511
+    imuRPYWeight: 0.01
+    
+    # Extrinsics (consistent with imuPreintegration)
+    extrinsicTrans: [0.0, 0.0, 0.0]
+    extrinsicRot: [-1.0, 0.0, 0.0,
+                    0.0, 1.0, 0.0,
+                    0.0, 0.0, -1.0]
+    
+    # LOAM feature threshold
+    edgeThreshold: 1.0
+    surfThreshold: 0.1
+    edgeFeatureMinValidNum: 10
+    surfFeatureMinValidNum: 100
+    
+    # Voxel filter params
+    odometrySurfLeafSize: 0.4
+    mappingCornerLeafSize: 0.2
+    mappingSurfLeafSize: 0.4
+    
+    # Robot motion constraint
+    z_tollerance: 1000.0
+    rotation_tollerance: 1000.0
+    
+    # CPU Params
+    numberOfCores: 4
+    mappingProcessInterval: 0.15
+    
+    # Surrounding map
+    surroundingkeyframeAddingDistThreshold: 1.0
+    surroundingkeyframeAddingAngleThreshold: 0.2
+    surroundingKeyframeDensity: 2.0
+    surroundingKeyframeSearchRadius: 50.0
+    
+    # Loop closure
+    loopClosureEnableFlag: true
+    loopClosureFrequency: 1.0
+    surroundingKeyframeSize: 50
+    historyKeyframeSearchRadius: 15.0
+    historyKeyframeSearchTimeDiff: 30.0
+    historyKeyframeSearchNum: 25
+    historyKeyframeFitnessScore: 0.3
+    
+    # Visualization
+    globalMapVisualizationSearchRadius: 1000.0
+    
+    # Save map
+    savePCD: false
+    savePCDDirectory: "/tmp/lio_sam/"
+    
+    # GPS settings (if using GPS)
+    useImuHeadingInitialization: true
+    useGpsElevation: false
+    gpsCovThreshold: 2.0
+    poseCovThreshold: 25.0

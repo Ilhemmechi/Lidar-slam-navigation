@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Differential Drive Controller Plugin -->
+  <gazebo>
+    <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+      <ros>
+        <namespace></namespace>
+        <remapping>cmd_vel:=cmd_vel</remapping>
+        <remapping>odom:=odom</remapping>
+      </ros>
+      
+      <!-- Wheel Information - Noms corrects selon le diagramme TF -->
+      <left_joint>back_left_wheel_joint</left_joint>
+      <right_joint>back_right_wheel_joint</right_joint>
+      
+      <!-- Kinematics -->
+      <wheel_separation>0.45</wheel_separation>
+      <wheel_diameter>${2*wheel_radius}</wheel_diameter>
+      
+      <!-- Limits -->
+      <max_wheel_torque>20</max_wheel_torque>
+      <max_wheel_acceleration>1.0</max_wheel_acceleration>
+      
+      <!-- Output -->
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>true</publish_wheel_tf>
+      
+      <!-- Frame names - Selon le diagramme TF -->
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+      
+      <!-- Timing configuration -->
+      <use_sim_time>true</use_sim_time>
+      <update_rate>50</update_rate>
+      <tf_frequency>50.0</tf_frequency>
+      
+    </plugin>
+  </gazebo>
+</robot>

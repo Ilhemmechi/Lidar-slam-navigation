@@ -1,0 +1,41 @@
+# ROS
+build/
+install/
+log/
+**/build/
+**/install/
+**/log/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# URDF generated files
+frames_*.gv
+frames_*.pdf
+
+# Datasets (if large)
+datasets/*.bag
+datasets/*.pcd
+*.bag
+*.pcd
+
+# Results
+results/*
