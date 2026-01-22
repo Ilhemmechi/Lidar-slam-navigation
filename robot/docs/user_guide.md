@@ -6,13 +6,14 @@ Démarrage rapide
 
 ```bash
 # Terminal 1 : Lancer Gazebo avec le robot
-cd ~/lidar_slam/
+cd ~/robot/
 source install/setup.bash
 ros2 launch mon_urdf gazebo.launch.py
 
 # Terminal 2 : Lancer Fast-LIO2
 ros2 launch fast_lio2 mapping.launch.py
-
+ou
+ros2 launch lio_sam run.launch.py
 # Terminal 3 : Lancer Nav2
 ros2 launch nav2_bringup navigation_launch.py
 
@@ -28,7 +29,7 @@ Pour comparer des trajectoires et calculer des métriques APE/RPE, utilisez `evo
 Méthode rapide (manuel) :
 
 ```bash
-cd ~/lidar_slam/src/web_controller
+cd ~/robot/src/web_controller
 
 # Lancer le serveur web
 python3 web_controller_server.py
