@@ -57,11 +57,6 @@ robot/
 │   ├── navigation_launch.py           # Lancement navigation
 │   └── full_system_launch.py          # Lancement système complet
 │
-├── datasets/                          # Jeux de données
-│   ├── FINAL_global_map_20251005_033109_2d_map.pgm  # Carte générée
-│   ├── FINAL_global_map_20251005_033109_2d_map.yaml # Métadonnées carte
-│   ├── map.pgm                        # Carte statique
-│   └── map.yaml                       # Métadonnées carte statique
 │
 ├── results/                           # Résultats expérimentaux
 │   ├── metrics/                       # Métriques APE/RPE
@@ -83,7 +78,7 @@ robot/
 
 1. **Cloner le dépôt** :
    ```bash
-   git clone https://github.com/votre-nom/robot.git
+   git clone https://github.com/Ilhemmechi/robot.git
    cd robot
    ```
 
@@ -132,7 +127,7 @@ Contenu principal
 
 ```bash
 # Terminal 1 : Environnement Gazebo
-ros2 launch robot_description gazebo.launch.py
+ros2 launch mon urdf gazebo.launch.py
 
 # Terminal 2 : SLAM (Fast-LIO2)
 ros2 launch fast_lio2 fast_lio2_launch.py
@@ -140,9 +135,6 @@ ros2 launch fast_lio2 fast_lio2_launch.py
 # Terminal 3 : Navigation Nav2
 ros2 launch nav2_bringup navigation_launch.py
 
-# Terminal 4 : Visualisation RViz
-ros2 launch robot_description rviz.launch.py
-```
 
 ### Évaluation des Performances
 
