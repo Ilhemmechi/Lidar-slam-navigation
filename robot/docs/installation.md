@@ -245,7 +245,7 @@ python demo.py --help
 
 ```bash
 cd ~/robot/src
-git clone https://github.com/votre-username/lidar-slam-navigation.git
+git clone https://github.com/Ilhemmechi/lidar-slam-navigation.git
 cd lidar-slam-navigation
 ```
 
@@ -284,19 +284,12 @@ ros2 launch fast_lio mapping.launch.py
 
 ```bash
 ros2 launch lio_sam run.launch.py
-```
-
-### 5. Tester Nav2
-
-```bash
-ros2 launch nav2_bringup tb3_simulation_launch.py
-```
 
 ### 6. Tester PV-RCNN
 
 ```bash
-source ~/ros2_ws/pv_rcnn_env/bin/activate
-cd ~/ros2_ws/src/OpenPCDet/tools
+source ~/robot/pv_rcnn_env/bin/activate
+cd ~/robot/src/OpenPCDet/tools
 python demo.py --cfg_file cfgs/kitti_models/pv_rcnn.yaml \
                --ckpt ../checkpoints/pv_rcnn_8369.pth
 ```
