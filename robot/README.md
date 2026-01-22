@@ -105,7 +105,6 @@ robot/
 Contenu principal
 
 - `src/` : sources et ressources principales fournies.
-  - `map.pgm`, `map.yaml` : carte 2D et métadonnées.
   - `fastlio_maps/` : cartes et nuages de points générés par un pipeline LIO/SLAM (Fast-LIO 2).
     - `src/.../FAST_LIO/` : sources de Fast-LIO 2 présentes dans l'arborescence (`FAST_LIO` package).
       - `src/.../FAST_LIO/config/velodyne.yaml` ou `velodyne_gazebo.yaml` : fichiers de configuration LiDAR utilisés par Fast-LIO 2 (ex : extrinsèques, modèle de capteur, topics).
@@ -115,7 +114,7 @@ Contenu principal
   - `mon_urdf/` : URDF/xacro et fichiers RViz pour visualisation du robot.
   - `nav2_config/` : configuration pour Nav2 (navigation).
     - `nav2_config/nav2_params.yaml` : fichier de configuration utilisé pour lio_sam / Nav2.
-    `nav2.params.yaml`  `FAST_LIO/launch/*` : fichier de config pour fast_lio2
+    `robot/confignav2.params.yaml`  `FAST_LIO/launch/*` : fichier de config pour fast_lio2
 
 ## Fichiers de configuration
 
@@ -130,8 +129,9 @@ Contenu principal
 ros2 launch mon urdf gazebo.launch.py
 
 # Terminal 2 : SLAM (Fast-LIO2)
-ros2 launch fast_lio2 fast_lio2_launch.py
-
+ros2 launch fast_lio2 mapping_launch.py
+ou
+ros2 launch lio_sam run.launch.py ( pour lancer lio_sam)
 # Terminal 3 : Navigation Nav2
 ros2 launch nav2_bringup navigation_launch.py
 
