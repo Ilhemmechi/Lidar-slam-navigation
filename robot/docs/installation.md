@@ -109,8 +109,8 @@ gazebo --version
 
 ```bash
 # Créer un workspace
-mkdir -p ~/ros2_ws/src
-cd ~/ros2_ws/src
+mkdir -p ~/robot/src
+cd ~/robot/src
 
 # Cloner Fast-LIO2
 git clone https://github.com/hku-mars/FAST_LIO.git
@@ -122,15 +122,15 @@ sudo apt install libpcl-dev -y
 sudo apt install libeigen3-dev -y
 
 # Compiler
-cd ~/ros2_ws
-colcon build --packages-select fast_lio
+cd ~/robot
+colcon build --packages-select fast_lio2
 source install/setup.bash
 ```
 
 ### LIO-SAM
 
 ```bash
-cd ~/ros2_ws/src
+cd ~/robot/src
 
 # Cloner LIO-SAM (version ROS2)
 git clone https://github.com/TixiaoShan/LIO-SAM.git
@@ -225,7 +225,7 @@ pip install SharedArray
 ### 4. Installation de OpenPCDet (framework pour PV-RCNN)
 
 ```bash
-cd ~/ros2_ws/src
+cd ~/robot/src
 git clone https://github.com/open-mmlab/OpenPCDet.git
 cd OpenPCDet
 
@@ -244,7 +244,7 @@ python demo.py --help
 ### 1. Cloner le projet
 
 ```bash
-cd ~/ros2_ws/src
+cd ~/robot/src
 git clone https://github.com/votre-username/lidar-slam-navigation.git
 cd lidar-slam-navigation
 ```
@@ -270,7 +270,7 @@ seaborn>=0.12.0
 ### 3. Installer les dépendances ROS2 spécifiques
 
 ```bash
-cd ~/ros2_ws
+cd ~/robot
 rosdep install --from-paths src --ignore-src -r -y
 ```
 ester Fast-LIO2
@@ -341,7 +341,7 @@ sudo apt install --reinstall gazebo11
 
 ```bash
 # Nettoyer et recompiler
-cd ~/ros2_ws
+cd ~/robot
 rm -rf build/ install/ log/
 colcon build --symlink-install
 ```
