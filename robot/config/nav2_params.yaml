@@ -2,11 +2,10 @@
 # Navigation parameters for SLAM mode (without pre-existing map)
 
 # REMOVE amcl - not needed for SLAM
-# amcl: {} # COMMENTED OUT
 
 bt_navigator:
   ros__parameters:
-    use_sim_time: True  # Changed to True for Gazebo
+    use_sim_time: True
     global_frame: odom
     robot_base_frame: base_footprint
     odom_topic: /odom
@@ -69,7 +68,7 @@ bt_navigator:
 
 controller_server:
   ros__parameters:
-    use_sim_time: True  # Changed to True
+    use_sim_time: True  
     controller_frequency: 20.0
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.5
@@ -135,7 +134,7 @@ local_costmap:
       publish_frequency: 2.0
       global_frame: odom
       robot_base_frame: base_footprint
-      use_sim_time: True  # Changed to True
+      use_sim_time: True  
       rolling_window: true
       width: 3
       height: 3
@@ -206,11 +205,10 @@ global_costmap:
       always_send_full_costmap: True
 
 # REMOVE map_server - not needed for SLAM
-# map_server: {} # COMMENTED OUT
 
 map_saver:
   ros__parameters:
-    use_sim_time: True  # Changed to True
+    use_sim_time: True  
     save_map_timeout: 5.0
     free_thresh_default: 0.25
     occupied_thresh_default: 0.65
@@ -219,7 +217,7 @@ map_saver:
 planner_server:
   ros__parameters:
     expected_planner_frequency: 20.0
-    use_sim_time: True  # Changed to True
+    use_sim_time: True 
     planner_plugins: ["GridBased"]
     GridBased:
       plugin: "nav2_navfn_planner/NavfnPlanner"
@@ -264,11 +262,11 @@ behavior_server:
 
 robot_state_publisher:
   ros__parameters:
-    use_sim_time: True  # Changed to True
+    use_sim_time: True  
 
 waypoint_follower:
   ros__parameters:
-    use_sim_time: True  # Changed to True
+    use_sim_time: True  
     loop_rate: 20
     stop_on_failure: false
     waypoint_task_executor_plugin: "wait_at_waypoint"
