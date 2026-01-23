@@ -1,0 +1,45 @@
+# FAST-LIO2 YAML config for Gazebo Velodyne
+# =========================================
+
+# --------------------------
+# General settings
+# --------------------------
+use_sim_time: true           # utiliser l'horloge de simulation
+lidar_topic: /velodyne/gazebo_ros_laser_controller/out
+lidar_frame: lidar_link
+
+# --------------------------
+# IMU settings (si tu as un IMU)
+# --------------------------
+imu_topic: /imu/imu_plugin/out
+imu_frame: imu_link
+use_imu: true
+imu_acc_noise: 0.01
+imu_gyr_noise: 0.001
+imu_acc_bias_noise: 0.0002
+imu_gyr_bias_noise: 0.00002
+
+# --------------------------
+# Lidar settings
+# --------------------------
+lidar_type: 1               # 1=Velodyne
+scan_rate: 10.0             # Hz, adapter si nécessaire
+max_range: 100.0            # m
+min_range: 0.1              # m
+downsample_rate: 1          # garder tous les points
+voxel_size: 0.2             # m, filtrage voxel
+
+# --------------------------
+# Map / KD-tree settings
+# --------------------------
+map_resolution: 0.3         # m
+kdtree_search_radius: 0.6   # m
+map_publish_rate: 2.0       # Hz
+
+# --------------------------
+# Output / Logging
+# --------------------------
+save_map: false
+output_frame: map
+publish_tf: true
+
