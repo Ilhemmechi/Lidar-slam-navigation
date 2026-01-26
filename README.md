@@ -74,8 +74,11 @@ Carte statique (.pgm) → map_server
   
 *Démonstrations :
 1-Carte 3D génerée avec 3D :
+<p align="center">
+  <img src="Lidar-slam-navigation/robot/results/trajectories/gif
+/59f480a2-45b7-433f-88e8-dfac460ea17f.png" alt="Démo SLAM" width="600"/>
+</p>
 
-<img width="862" height="681" alt="59f480a2-45b7-433f-88e8-dfac460ea17f" src="https://github.com/user-attachments/assets/5190634d-025b-4d30-87c6-5357ece601d8" />
 
 2-carte 2D compatible avec Nav2
 <img width="551" height="484" alt="3bc4a791-d7f3-4d02-bd32-cd090e41ec80" src="https://github.com/user-attachments/assets/8a0b54b1-ef14-4022-a6b4-f57fd0a6bb5a" />
