@@ -1,4 +1,4 @@
-![fast_lio2_nav gif](https://github.com/user-attachments/assets/5b4cbc44-9004-46f8-9d42-9cf288a2f944)Pipeline LiDAR SLAM pour Navigation Robotique Autonome :
+Pipeline LiDAR SLAM pour Navigation Robotique Autonome :
 [![ROS2](https://img.shields.io/badge/ROS2-Humble-blue)](https://docs.ros.org/en/humble/)
 [![Python](https://img.shields.io/badge/Python-3.10+-green)](https://www.python.org/)
 [![C++](https://img.shields.io/badge/C++-17-orange)](https://isocpp.org/)
@@ -74,14 +74,16 @@ Carte statique (.pgm) → map_server
   
 *Démonstrations :
 1-Carte 3D génerée avec 3D :
+
 <img width="862" height="681" alt="59f480a2-45b7-433f-88e8-dfac460ea17f" src="https://github.com/user-attachments/assets/5190634d-025b-4d30-87c6-5357ece601d8" />
+
 2-carte 2D compatible avec Nav2
 <img width="551" height="484" alt="3bc4a791-d7f3-4d02-bd32-cd090e41ec80" src="https://github.com/user-attachments/assets/8a0b54b1-ef14-4022-a6b4-f57fd0a6bb5a" />
 3-Interface web pour le controle du robot 
 ![interface_web gif](https://github.com/user-attachments/assets/f5bc17b0-ab9a-44df-a02c-a99d27b583ba)
 4-Navigation autonome avec fast_lio2
 
-![fast_lio2_nav gif](https://github.com/user-attachments/assets/ca8d0e1b-6307-4f13-a32a-b4f2c43c2e90)
+![fast_lio2_nav gif](https://github.com/user-attachments/assets/2315c8eb-047e-4934-8fce-48b47e75c07d)
 
 
 5-Navigation autonome avec lio_sam 
