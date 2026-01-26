@@ -261,7 +261,6 @@ robot/
 │   └── evaluation/
 ├── launch/
 └── results/
-    ├── metrics/
     └── trajectories/
 
 ## 🤝 Contribuer
@@ -278,14 +277,13 @@ Les contributions sont les bienvenues !
 
 Ce projet est publié sous licence MIT — voir le fichier `LICENSE`.
 
----
 
-## Contact
+ 📬 Contact
 
-Auteure : Mechi Ilhem — voir les métadonnées du dépôt pour les coordonnées.
+**Auteure :** Mechi Ilhem  
+📧 Email :ilhemmechi5@gmail.com 
+🔗 LinkedIn : https://www.linkedin.com/in/ilhem-mechi-0035a9283
 
----
 
-Remarques :
-- Adaptez les noms de paquets et chemins (ex. `mon_urdf`, `fast_lio2`) en fonction de votre arborescence locale si nécessaire.
-- Pour que je prépare un commit/PR automatique avec ce README, dites-moi dans quelle branche le pousser (ex. `main`).  
+
+
