@@ -37,5 +37,3 @@ datasets/*.pcd
 *.bag
 *.pcd
 
-# Results
-results/*
