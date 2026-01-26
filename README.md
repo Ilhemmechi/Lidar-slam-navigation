@@ -78,22 +78,22 @@ https://github.com/Ilhemmechi/Lidar-slam-navigation/blob/main/robot/results/traj
 
 
 2-carte 2D compatible avec Nav2
-<img width="551" height="484" alt="3bc4a791-d7f3-4d02-bd32-cd090e41ec80" src="https://github.com/user-attachments/assets/8a0b54b1-ef14-4022-a6b4-f57fd0a6bb5a" />
+https://github.com/Ilhemmechi/Lidar-slam-navigation/blob/main/robot/results/trajectories/gif/3bc4a791-d7f3-4d02-bd32-cd090e41ec80.png
 3-Interface web pour le controle du robot 
-![interface_web gif](https://github.com/user-attachments/assets/f5bc17b0-ab9a-44df-a02c-a99d27b583ba)
+https://github.com/Ilhemmechi/Lidar-slam-navigation/blob/main/robot/results/trajectories/gif/interface_web.gif.gif
 4-Navigation autonome avec fast_lio2
+https://github.com/Ilhemmechi/Lidar-slam-navigation/blob/main/robot/results/trajectories/gif/fast_lio2_nav.gif.gif
 
-![fast_lio2_nav gif](https://github.com/user-attachments/assets/2315c8eb-047e-4934-8fce-48b47e75c07d)
 
 
 5-Navigation autonome avec lio_sam 
 
-![lio_sam_nav gif](https://github.com/user-attachments/assets/5e4beed7-8c45-42d9-bfcc-d5c2fb6fc226)
+https://github.com/Ilhemmechi/Lidar-slam-navigation/blob/main/robot/results/trajectories/gif/lio_sam_nav.gif.gif
 6-Détection d'objets :
 * Détection des pédesteriens
-  <img width="226" height="269" alt="eb547efb-6b75-46aa-8e53-af973bd643cd" src="https://github.com/user-attachments/assets/1707ec2d-2a1c-48c1-96cd-8dc5d19e3e54" />
+  https://github.com/Ilhemmechi/Lidar-slam-navigation/blob/main/robot/results/trajectories/gif/eb547efb-6b75-46aa-8e53-af973bd643cd.png
 *Détection des voitures
-![1b0de6ba-cf30-48a7-9b27-9f2d01d6f140](https://github.com/user-attachments/assets/96fd6db0-76b7-443a-8ca6-523f65b4878a)
+https://github.com/Ilhemmechi/Lidar-slam-navigation/blob/main/robot/results/trajectories/gif/1b0de6ba-cf30-48a7-9b27-9f2d01d6f140.jpg
 
 📊 Résultats Quantitatifs
 
@@ -104,29 +104,18 @@ https://github.com/Ilhemmechi/Lidar-slam-navigation/blob/main/robot/results/traj
 RMSE : 0.017 m (1.7 cm)  ⭐ Précision exceptionnelle
 STD  : 0.011 m           ⭐ Très stable
 Max  : 0.053 m           ⭐ Robuste
-```
 
+https://github.com/Ilhemmechi/Lidar-slam-navigation/blob/main/robot/results/trajectories/odom_vs_odometry-1.pdf
 **LIO-SAM + AMCL** :
 ```
 RMSE : 0.504 m (50.4 cm)
 STD  : 0.338 m
 Max  : 1.010 m
-```
+https://github.com/Ilhemmechi/Lidar-slam-navigation/blob/main/robot/results/trajectories/amcl_vs_odom-2.pdf
+
 
 **Conclusion** : Fast-LIO2 **30× plus précis**, recommandé pour applications haute précision
 
----
-
-### Performance Navigation
-
-| Système | Succès | Échecs | CPU | RAM |
-|---------|--------|--------|-----|-----|
-| **Fast-LIO2** | **94%** | 6% (1) | 55% | 11 GB |
-| **LIO-SAM + AMCL** | 82% | 18% (3) | 40% | 6 GB |
-
-**Seuil critique** : APE > 0.8m → Échec probable (LIO-SAM)
-
----
 
 ### Détection PV-RCNN
 
@@ -136,6 +125,8 @@ Max  : 1.010 m
 | **Pedestrian** | 82.4% | 74.9% | 68.2% |
 
 **Dataset** : 2847 scènes Gazebo | **Entraînement** : 80 époques (8h)
+
+
 🎯 Quand Utiliser Chaque Pipeline ?
    📊 Comparaison des Pipelines
 
@@ -176,4 +167,3 @@ Max  : 1.010 m
 - Navigation industrielle (usines)
   
 
-![1b0de6ba-cf30-48a7-9b27-9f2d01d6f140](https://github.com/user-attachments/assets/b2986d59-394d-49dd-b323-f3eef73fb08f)
